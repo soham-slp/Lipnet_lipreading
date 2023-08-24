@@ -5,10 +5,6 @@ import dlib
 from typing import List
 import os
 
-gpus = tf.config.list_physical_devices('GPU')
-for gpu in gpus:
-    tf.config.experimental.set_memory_growth(gpu, True)
-
 print(f"GPU setup complete!")
 
 hog_face_detector = dlib.get_frontal_face_detector()
@@ -46,8 +42,8 @@ def load_video(path:str) -> List[float]:
             frames.append(frame[start_point[1]:end_point[1],start_point[0]:end_point[0],:])
         else:
             print('No frames detected')
-            print(frames[-1])
             frames.append(np.zeroes(shape = (50, 100, 1)))
+            print(frames[-1])
     cap.release()
     
     mean = tf.math.reduce_mean(frames)
