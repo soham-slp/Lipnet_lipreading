@@ -28,6 +28,7 @@ def load_video(path:str) -> List[float]:
         ret, frame = cap.read()
         frame = tf.image.rgb_to_grayscale(frame)
         faces = hog_face_detector(frame.numpy())
+        lips = []
         for face in faces:
             face_landmarks = dlib_facelandmark(frame.numpy(), face)
 
@@ -37,12 +38,16 @@ def load_video(path:str) -> List[float]:
                 x = face_landmarks.part(n).x
                 y = face_landmarks.part(n).y
                 lips.append([x, y])
-	
-        lips = np.array(lips)
-        centroid = np.mean(lips, axis = 0)
-        start_point = (int(centroid[0] - 100 // 2), int(centroid[1] - 50 // 2))
-        end_point = (int(centroid[0] + 100 // 2), int(centroid[1] + 50 // 2))
-        frames.append(frame[start_point[1]:end_point[1],start_point[0]:end_point[0],:])
+        if len(lips) != 0:
+            lips = np.array(lips)
+            centroid = np.mean(lips, axis = 0)
+            start_point = (int(centroid[0] - 100 // 2), int(centroid[1] - 50 // 2))
+            end_point = (int(centroid[0] + 100 // 2), int(centroid[1] + 50 // 2))
+            frames.append(frame[start_point[1]:end_point[1],start_point[0]:end_point[0],:])
+        else:
+            print('No frames detected')
+            print(frames[-1])
+            frames.append(np.zeroes(shape = (50, 100, 1)))
     cap.release()
     
     mean = tf.math.reduce_mean(frames)

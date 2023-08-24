@@ -10,6 +10,6 @@ def mappable_function(path:str) ->List[str]:
 def create_pipeline():
     data = tf.data.Dataset.list_files('./data/s1/*.mpg')\
         .shuffle(500).map(mappable_function)\
-        .padded_batch(2, padded_shapes = ([75, None, None, None], [40]))\
+        .padded_batch(2, padded_shapes = ([75, 50, 100, 1], [40]))\
         .prefetch(tf.data.AUTOTUNE)
     return data
